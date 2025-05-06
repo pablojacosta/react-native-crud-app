@@ -29,6 +29,7 @@ const AddItem = ({
       padding: 10,
       width: "100%",
       flex: 1,
+      fontFamily: "Inter_500Medium",
     },
     button: {
       paddingHorizontal: 10,
