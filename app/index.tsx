@@ -11,8 +11,9 @@ import {
   StyleSheet,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import AddItem from "./components/AddItem/AddItem";
 import HeaderComp from "./components/HeaderComp/HeaderComp";
-import ListItemComponent from "./components/ListItemComponent/ListItemComponent";
+import ListItem from "./components/ListItem/ListItem";
 
 const createStyles = (theme: ITheme, colorScheme: ColorSchemeName) => {
   const isDark = colorScheme === "dark";
@@ -41,6 +42,19 @@ const createStyles = (theme: ITheme, colorScheme: ColorSchemeName) => {
     header: {
       marginHorizontal: "auto",
     },
+    input: {
+      width: "100%",
+      height: 48,
+      backgroundColor: "#ffffff",
+      borderWidth: 2,
+      borderRadius: 10,
+      borderColor: isDark ? "rgba(167, 63, 63, 0.88)" : "#000000",
+      marginTop: 10,
+      display: "flex",
+      flexDirection: "row",
+      justifyContent: "space-between",
+      alignItems: "center",
+    },
   });
 };
 
@@ -51,9 +65,18 @@ export default function Index() {
   const theme = colorScheme === "dark" ? Colors.dark : Colors.light;
   const styles = createStyles(theme, colorScheme);
   const [data, setData] = useState(TODO_DATA);
+  const [newItem, onChangeText] = useState("");
 
   const handleOnDelete = (id: number) => {
     setData((prevState) => prevState.filter((item) => item.id !== id));
+  };
+
+  const handleOnAdd = (text: string) => {
+    setData((prevState) =>
+      prevState.concat([
+        { id: data.length + 1, title: text, completed: false },
+      ]),
+    );
   };
 
   return (
@@ -63,13 +86,21 @@ export default function Index() {
         keyExtractor={(item) => item.id.toString()}
         contentContainerStyle={[styles.container, { minHeight: height }]}
         ListHeaderComponent={
-          <HeaderComp
-            headerViewStyle={styles.header}
-            headerTextStyle={styles.text}
-          />
+          <>
+            <HeaderComp
+              headerViewStyle={styles.header}
+              headerTextStyle={styles.text}
+            />
+            <AddItem
+              newItem={newItem}
+              onChangeText={onChangeText}
+              inputStyles={styles.input}
+              handleOnAdd={handleOnAdd}
+            />
+          </>
         }
         renderItem={({ item }) => (
-          <ListItemComponent
+          <ListItem
             item={item}
             isCompleted={item.completed}
             viewStyle={styles.row}

@@ -10,7 +10,7 @@ import {
   ViewStyle,
 } from "react-native";
 
-interface IListComponent {
+interface IListItem {
   item: IItem;
   isCompleted: boolean;
   viewStyle: ViewStyle;
@@ -18,13 +18,13 @@ interface IListComponent {
   handleOnDelete: (id: number) => void;
 }
 
-const ListItemComponent = ({
+const ListItem = ({
   item,
   isCompleted,
   viewStyle,
   textStyle,
   handleOnDelete,
-}: IListComponent) => {
+}: IListItem) => {
   return (
     <View style={[viewStyle, styles.item]}>
       <Text style={[textStyle, isCompleted && styles.completedText]}>
@@ -55,4 +55,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ListItemComponent;
+export default ListItem;
