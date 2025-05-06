@@ -4,7 +4,6 @@ import { useState } from "react";
 import {
   Appearance,
   ColorSchemeName,
-  Dimensions,
   FlatList,
   Platform,
   ScrollView,
@@ -20,14 +19,12 @@ const createStyles = (theme: ITheme, colorScheme: ColorSchemeName) => {
 
   return StyleSheet.create({
     container: {
-      display: "flex",
-      flexDirection: "column",
       paddingHorizontal: 10,
       width: "100%",
       gap: 10,
       backgroundColor: theme.background,
       paddingVertical: 16,
-      height: "100%",
+      minHeight: "100%",
     },
     row: {
       width: "100%",
@@ -50,7 +47,6 @@ const createStyles = (theme: ITheme, colorScheme: ColorSchemeName) => {
       borderRadius: 10,
       borderColor: isDark ? "rgba(167, 63, 63, 0.88)" : "#000000",
       marginTop: 10,
-      display: "flex",
       flexDirection: "row",
       justifyContent: "space-between",
       alignItems: "center",
@@ -59,23 +55,27 @@ const createStyles = (theme: ITheme, colorScheme: ColorSchemeName) => {
 };
 
 export default function Index() {
-  const { height } = Dimensions.get("window");
   const Container = Platform.OS === "web" ? ScrollView : SafeAreaView;
   const colorScheme = Appearance.getColorScheme();
   const theme = colorScheme === "dark" ? Colors.dark : Colors.light;
   const styles = createStyles(theme, colorScheme);
-  const [data, setData] = useState(TODO_DATA);
-  const [newItem, onChangeText] = useState("");
+  const [data, setData] = useState(TODO_DATA.sort((a, b) => b.id - a.id));
+  const [newItem, setNewItem] = useState("");
 
   const handleOnDelete = (id: number) => {
-    setData((prevState) => prevState.filter((item) => item.id !== id));
+    setData(data.filter((item) => item.id !== id));
   };
 
   const handleOnAdd = (text: string) => {
-    setData((prevState) =>
-      prevState.concat([
-        { id: data.length + 1, title: text, completed: false },
-      ]),
+    setData([{ id: data.length + 1, title: text, completed: false }, ...data]);
+    setNewItem("");
+  };
+
+  const handleOnToggle = (id: number) => {
+    setData(
+      data.map((item) =>
+        item.id === id ? { ...item, completed: !item.completed } : item,
+      ),
     );
   };
 
@@ -84,7 +84,7 @@ export default function Index() {
       <FlatList
         data={data}
         keyExtractor={(item) => item.id.toString()}
-        contentContainerStyle={[styles.container, { minHeight: height }]}
+        contentContainerStyle={styles.container}
         ListHeaderComponent={
           <>
             <HeaderComp
@@ -93,7 +93,7 @@ export default function Index() {
             />
             <AddItem
               newItem={newItem}
-              onChangeText={onChangeText}
+              onChangeText={setNewItem}
               inputStyles={styles.input}
               handleOnAdd={handleOnAdd}
             />
@@ -106,6 +106,7 @@ export default function Index() {
             viewStyle={styles.row}
             textStyle={styles.text}
             handleOnDelete={handleOnDelete}
+            handleOnToggle={handleOnToggle}
           />
         )}
       ></FlatList>
