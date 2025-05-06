@@ -27,9 +27,11 @@ const AddItem = ({
     input: {
       height: "100%",
       padding: 10,
+      width: "100%",
+      flex: 1,
     },
     button: {
-      paddingRight: 10,
+      paddingHorizontal: 10,
     },
   });
 
@@ -39,7 +41,6 @@ const AddItem = ({
     }
 
     handleOnAdd(newItem);
-    onChangeText("");
   };
 
   return (
@@ -47,6 +48,7 @@ const AddItem = ({
       <TextInput
         value={newItem}
         placeholder={placeholder}
+        placeholderTextColor="gray"
         onChangeText={(text) => onChangeText(text)}
         style={styles.input}
       />

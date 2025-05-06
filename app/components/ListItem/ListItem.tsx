@@ -16,6 +16,7 @@ interface IListItem {
   viewStyle: ViewStyle;
   textStyle: TextStyle;
   handleOnDelete: (id: number) => void;
+  handleOnToggle: (id: number) => void;
 }
 
 const ListItem = ({
@@ -24,10 +25,14 @@ const ListItem = ({
   viewStyle,
   textStyle,
   handleOnDelete,
+  handleOnToggle,
 }: IListItem) => {
   return (
     <View style={[viewStyle, styles.item]}>
-      <Text style={[textStyle, isCompleted && styles.completedText]}>
+      <Text
+        style={[textStyle, isCompleted && styles.completedText]}
+        onPress={() => handleOnToggle(item.id)}
+      >
         {item.title}
       </Text>
 
@@ -48,10 +53,10 @@ const styles = StyleSheet.create({
     color: "gray",
   },
   item: {
-    display: "flex",
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
+    pointerEvents: "auto",
   },
 });
 
