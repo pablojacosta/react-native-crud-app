@@ -1,8 +1,10 @@
 import { Colors, ITheme } from "@/constants/Colors";
 import { TODO_DATA } from "@/data/todos";
+import { useState } from "react";
 import {
   Appearance,
   ColorSchemeName,
+  Dimensions,
   FlatList,
   Platform,
   ScrollView,
@@ -24,6 +26,7 @@ const createStyles = (theme: ITheme, colorScheme: ColorSchemeName) => {
       gap: 10,
       backgroundColor: theme.background,
       paddingVertical: 16,
+      height: "100%",
     },
     row: {
       width: "100%",
@@ -42,17 +45,23 @@ const createStyles = (theme: ITheme, colorScheme: ColorSchemeName) => {
 };
 
 export default function Index() {
+  const { height } = Dimensions.get("window");
   const Container = Platform.OS === "web" ? ScrollView : SafeAreaView;
   const colorScheme = Appearance.getColorScheme();
   const theme = colorScheme === "dark" ? Colors.dark : Colors.light;
   const styles = createStyles(theme, colorScheme);
+  const [data, setData] = useState(TODO_DATA);
+
+  const handleOnDelete = (id: number) => {
+    setData((prevState) => prevState.filter((item) => item.id !== id));
+  };
 
   return (
     <Container>
       <FlatList
-        data={TODO_DATA}
+        data={data}
         keyExtractor={(item) => item.id.toString()}
-        contentContainerStyle={styles.container}
+        contentContainerStyle={[styles.container, { minHeight: height }]}
         ListHeaderComponent={
           <HeaderComp
             headerViewStyle={styles.header}
@@ -65,6 +74,7 @@ export default function Index() {
             isCompleted={item.completed}
             viewStyle={styles.row}
             textStyle={styles.text}
+            handleOnDelete={handleOnDelete}
           />
         )}
       ></FlatList>
