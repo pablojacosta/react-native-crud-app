@@ -3,7 +3,8 @@ import { ThemeContext } from "@/context/ThemeContext";
 import { TODO_DATA } from "@/data/todos";
 import { Inter_500Medium, useFonts } from "@expo-google-fonts/inter";
 import { useContext, useState } from "react";
-import { FlatList, Platform, ScrollView, StyleSheet } from "react-native";
+import { Platform, ScrollView, StyleSheet } from "react-native";
+import Animated, { LinearTransition } from "react-native-reanimated";
 import { SafeAreaView } from "react-native-safe-area-context";
 import ListHeaderComponent from "./components/ListHeaderComponent/ListHeaderComponent";
 import ListItem from "./components/ListItem/ListItem";
@@ -39,7 +40,7 @@ export default function Index() {
 
   return (
     <Container>
-      <FlatList
+      <Animated.FlatList
         data={data}
         keyExtractor={(item) => item.id.toString()}
         contentContainerStyle={styles.container}
@@ -58,7 +59,9 @@ export default function Index() {
             handleOnToggle={handleOnToggle}
           />
         )}
-      ></FlatList>
+        itemLayoutAnimation={LinearTransition}
+        keyboardDismissMode="on-drag"
+      />
     </Container>
   );
 }
