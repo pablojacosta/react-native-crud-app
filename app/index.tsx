@@ -1,8 +1,10 @@
 import { ITheme } from "@/constants/Colors";
 import { ThemeContext } from "@/context/ThemeContext";
-import { TODO_DATA } from "@/data/todos";
+import { IItem, TODO_DATA } from "@/data/todos";
 import { Inter_500Medium, useFonts } from "@expo-google-fonts/inter";
-import { useContext, useState } from "react";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { StatusBar } from "expo-status-bar";
+import { useContext, useEffect, useState } from "react";
 import { Platform, ScrollView, StyleSheet } from "react-native";
 import Animated, { LinearTransition } from "react-native-reanimated";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -10,12 +12,44 @@ import ListHeaderComponent from "./components/ListHeaderComponent/ListHeaderComp
 import ListItem from "./components/ListItem/ListItem";
 
 export default function Index() {
-  const { theme } = useContext(ThemeContext);
+  const { theme, colorScheme } = useContext(ThemeContext);
   const Container = Platform.OS === "web" ? ScrollView : SafeAreaView;
   const styles = createStyles(theme);
-  const [data, setData] = useState(TODO_DATA.sort((a, b) => b.id - a.id));
+  const [data, setData] = useState<IItem[]>([]);
   const [newItem, setNewItem] = useState("");
   const [loaded, error] = useFonts({ Inter_500Medium });
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const json = await AsyncStorage.getItem("CrudApp");
+        const storageData = json !== null ? JSON.parse(json) : null;
+
+        if (storageData && storageData.length > 0) {
+          setData(storageData.sort((a: IItem, b: IItem) => b.id - a.id));
+        } else {
+          setData(TODO_DATA.sort((a, b) => b.id - a.id));
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  useEffect(() => {
+    const storeData = async () => {
+      try {
+        const json = JSON.stringify(data);
+        await AsyncStorage.setItem("CrudApp", json);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    storeData();
+  }, [data]);
 
   if (!loaded && !error) {
     return null;
@@ -62,6 +96,8 @@ export default function Index() {
         itemLayoutAnimation={LinearTransition}
         keyboardDismissMode="on-drag"
       />
+
+      <StatusBar style={"dark"} />
     </Container>
   );
 }
