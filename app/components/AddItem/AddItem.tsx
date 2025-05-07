@@ -1,40 +1,23 @@
+import { ThemeContext } from "@/context/ThemeContext";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import React from "react";
+import React, { useContext } from "react";
 import {
+  ColorSchemeName,
   Pressable,
   StyleSheet,
   TextInput,
   View,
-  ViewStyle,
 } from "react-native";
 
 interface IAddItem {
   newItem: string;
   onChangeText: (text: string) => void;
-  inputStyles: ViewStyle;
   handleOnAdd: (item: string) => void;
 }
 
-const AddItem = ({
-  newItem,
-  onChangeText,
-  inputStyles,
-  handleOnAdd,
-}: IAddItem) => {
-  const placeholder = "Add new item!";
-
-  const styles = StyleSheet.create({
-    input: {
-      height: "100%",
-      padding: 10,
-      width: "100%",
-      flex: 1,
-      fontFamily: "Inter_500Medium",
-    },
-    button: {
-      paddingHorizontal: 10,
-    },
-  });
+const AddItem = ({ newItem, onChangeText, handleOnAdd }: IAddItem) => {
+  const { colorScheme } = useContext(ThemeContext);
+  const styles = createStyles(colorScheme);
 
   const handleOnPress = (newItem: string) => {
     if (!newItem) {
@@ -45,10 +28,10 @@ const AddItem = ({
   };
 
   return (
-    <View style={inputStyles}>
+    <View style={styles.row}>
       <TextInput
         value={newItem}
-        placeholder={placeholder}
+        placeholder={"Add new item!"}
         placeholderTextColor="gray"
         onChangeText={(text) => onChangeText(text)}
         style={styles.input}
@@ -66,3 +49,34 @@ const AddItem = ({
 };
 
 export default AddItem;
+
+const createStyles = (colorScheme: ColorSchemeName) => {
+  const isDark = colorScheme === "dark";
+
+  return StyleSheet.create({
+    row: {
+      flexDirection: "row",
+      justifyContent: "space-between",
+      alignItems: "center",
+      height: 48,
+      width: "100%",
+      marginTop: 10,
+    },
+    input: {
+      width: "100%",
+      height: 48,
+      backgroundColor: "#ffffff",
+      borderWidth: 2,
+      borderRadius: 10,
+      borderColor: isDark ? "rgba(167, 63, 63, 0.88)" : "#000000",
+      padding: 10,
+      flex: 1,
+      fontFamily: "Inter_500Medium",
+    },
+    button: {
+      paddingHorizontal: 13,
+      position: "absolute",
+      right: 0,
+    },
+  });
+};

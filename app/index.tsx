@@ -1,28 +1,19 @@
-import { Colors, ITheme } from "@/constants/Colors";
+import { ITheme } from "@/constants/Colors";
+import { ThemeContext } from "@/context/ThemeContext";
 import { TODO_DATA } from "@/data/todos";
 import { Inter_500Medium, useFonts } from "@expo-google-fonts/inter";
-import { useState } from "react";
-import {
-  Appearance,
-  ColorSchemeName,
-  FlatList,
-  Platform,
-  ScrollView,
-  StyleSheet,
-} from "react-native";
+import { useContext, useState } from "react";
+import { FlatList, Platform, ScrollView, StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import AddItem from "./components/AddItem/AddItem";
-import HeaderComp from "./components/HeaderComp/HeaderComp";
+import ListHeaderComponent from "./components/ListHeaderComponent/ListHeaderComponent";
 import ListItem from "./components/ListItem/ListItem";
 
 export default function Index() {
+  const { theme } = useContext(ThemeContext);
   const Container = Platform.OS === "web" ? ScrollView : SafeAreaView;
-  const colorScheme = Appearance.getColorScheme();
-  const theme = colorScheme === "dark" ? Colors.dark : Colors.light;
-  const styles = createStyles(theme, colorScheme);
+  const styles = createStyles(theme);
   const [data, setData] = useState(TODO_DATA.sort((a, b) => b.id - a.id));
   const [newItem, setNewItem] = useState("");
-
   const [loaded, error] = useFonts({ Inter_500Medium });
 
   if (!loaded && !error) {
@@ -53,25 +44,16 @@ export default function Index() {
         keyExtractor={(item) => item.id.toString()}
         contentContainerStyle={styles.container}
         ListHeaderComponent={
-          <>
-            <HeaderComp
-              headerViewStyle={styles.header}
-              headerTextStyle={styles.text}
-            />
-            <AddItem
-              newItem={newItem}
-              onChangeText={setNewItem}
-              inputStyles={styles.input}
-              handleOnAdd={handleOnAdd}
-            />
-          </>
+          <ListHeaderComponent
+            newItem={newItem}
+            onChangeText={setNewItem}
+            handleOnAdd={handleOnAdd}
+          />
         }
         renderItem={({ item }) => (
           <ListItem
             item={item}
             isCompleted={item.completed}
-            viewStyle={styles.row}
-            textStyle={styles.text}
             handleOnDelete={handleOnDelete}
             handleOnToggle={handleOnToggle}
           />
@@ -81,10 +63,8 @@ export default function Index() {
   );
 }
 
-const createStyles = (theme: ITheme, colorScheme: ColorSchemeName) => {
-  const isDark = colorScheme === "dark";
-
-  return StyleSheet.create({
+const createStyles = (theme: ITheme) =>
+  StyleSheet.create({
     container: {
       paddingHorizontal: 10,
       width: "100%",
@@ -93,31 +73,4 @@ const createStyles = (theme: ITheme, colorScheme: ColorSchemeName) => {
       paddingVertical: 16,
       minHeight: "100%",
     },
-    row: {
-      width: "100%",
-      padding: 10,
-      borderWidth: 2,
-      borderRadius: 10,
-      borderColor: isDark ? "rgba(167, 63, 63, 0.88)" : "#000000",
-    },
-    text: {
-      color: isDark ? "#e1e1e1" : "#000000",
-      fontFamily: "Inter_500Medium",
-    },
-    header: {
-      marginHorizontal: "auto",
-    },
-    input: {
-      width: "100%",
-      height: 48,
-      backgroundColor: "#ffffff",
-      borderWidth: 2,
-      borderRadius: 10,
-      borderColor: isDark ? "rgba(167, 63, 63, 0.88)" : "#000000",
-      marginTop: 10,
-      flexDirection: "row",
-      justifyContent: "space-between",
-      alignItems: "center",
-    },
   });
-};
