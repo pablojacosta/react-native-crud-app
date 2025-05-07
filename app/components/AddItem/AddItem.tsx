@@ -35,6 +35,7 @@ const AddItem = ({ newItem, onChangeText, handleOnAdd }: IAddItem) => {
         placeholderTextColor="gray"
         onChangeText={(text) => onChangeText(text)}
         style={styles.input}
+        maxLength={30}
       />
 
       <Pressable onPress={() => handleOnPress(newItem)} style={styles.button}>

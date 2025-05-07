@@ -14,6 +14,7 @@ export interface ITheme {
   icon: string;
   tabIconDefault: string;
   tabIconSelected: string;
+  button: string;
 }
 
 export const Colors: { light: ITheme; dark: ITheme } = {
@@ -25,6 +26,7 @@ export const Colors: { light: ITheme; dark: ITheme } = {
     icon: "#687076",
     tabIconDefault: "#687076",
     tabIconSelected: tintColorLight,
+    button: "#687076",
   },
   dark: {
     text: "#ECEDEE",
@@ -34,5 +36,6 @@ export const Colors: { light: ITheme; dark: ITheme } = {
     icon: "#9BA1A6",
     tabIconDefault: "#9BA1A6",
     tabIconSelected: tintColorDark,
+    button: "#e1e1e1",
   },
 };

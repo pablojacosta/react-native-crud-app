@@ -3,6 +3,7 @@ import { ThemeContext } from "@/context/ThemeContext";
 import { IItem, TODO_DATA } from "@/data/todos";
 import { Inter_500Medium, useFonts } from "@expo-google-fonts/inter";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useRouter } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { useContext, useEffect, useState } from "react";
 import { Platform, ScrollView, StyleSheet } from "react-native";
@@ -12,7 +13,8 @@ import ListHeaderComponent from "./components/ListHeaderComponent/ListHeaderComp
 import ListItem from "./components/ListItem/ListItem";
 
 export default function Index() {
-  const { theme, colorScheme } = useContext(ThemeContext);
+  const { theme } = useContext(ThemeContext);
+  const router = useRouter();
   const Container = Platform.OS === "web" ? ScrollView : SafeAreaView;
   const styles = createStyles(theme);
   const [data, setData] = useState<IItem[]>([]);
@@ -72,6 +74,10 @@ export default function Index() {
     );
   };
 
+  const handleEdit = (id: number) => {
+    router.push(`/todos/${id}`);
+  };
+
   return (
     <Container>
       <Animated.FlatList
@@ -91,6 +97,7 @@ export default function Index() {
             isCompleted={item.completed}
             handleOnDelete={handleOnDelete}
             handleOnToggle={handleOnToggle}
+            handleEdit={handleEdit}
           />
         )}
         itemLayoutAnimation={LinearTransition}

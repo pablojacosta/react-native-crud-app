@@ -15,6 +15,7 @@ interface IListItem {
   isCompleted: boolean;
   handleOnDelete: (id: number) => void;
   handleOnToggle: (id: number) => void;
+  handleEdit: (id: number) => void;
 }
 
 const ListItem = ({
@@ -22,27 +23,30 @@ const ListItem = ({
   isCompleted,
   handleOnDelete,
   handleOnToggle,
+  handleEdit,
 }: IListItem) => {
   const { colorScheme } = useContext(ThemeContext);
   const styles = createStyles(colorScheme);
 
   return (
-    <View style={styles.item}>
-      <Text
-        style={[styles.text, isCompleted && styles.completedText]}
-        onPress={() => handleOnToggle(item.id)}
-      >
-        {item.title}
-      </Text>
+    <Pressable
+      onPress={() => handleEdit(item.id)}
+      onLongPress={() => handleOnToggle(item.id)}
+    >
+      <View style={styles.item}>
+        <Text style={[styles.text, isCompleted && styles.completedText]}>
+          {item.title}
+        </Text>
 
-      <Pressable onPress={() => handleOnDelete(item.id)}>
-        <Ionicons
-          name="trash-outline"
-          size={24}
-          color="rgba(167, 63, 63, 0.88)"
-        />
-      </Pressable>
-    </View>
+        <Pressable onPress={() => handleOnDelete(item.id)}>
+          <Ionicons
+            name="trash-outline"
+            size={24}
+            color="rgba(167, 63, 63, 0.88)"
+          />
+        </Pressable>
+      </View>
+    </Pressable>
   );
 };
 
